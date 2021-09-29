@@ -1,7 +1,116 @@
-echo "# Test3" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/glebas17/Test3.git
-git push -u origin main
+﻿var { Draw, Select, Modify, Snap } = ol.interaction;
+var Map = ol.Map;
+var Overlay = ol.Overlay;
+var View = ol.View;
+var { Fill, Stroke, Style, Circle: CircleStyle } = ol.style;
+var { LineString, Polygon } = ol.geom;
+var { OSM, Vector: VectorSource } = ol.source;
+var { Tile: TileLayer, Vector: VectorLayer } = ol.layer;
+var { getArea, getLength } = ol.sphere;
+var { unByKey } = ol.Observable;
+var MultiPoint = ol.geom.MultiPoint;
+var GeoJSON = ol.format.GeoJSON;
+var View = ol.View;
+
+var geojsonObject = {
+    type: 'FeatureCollection',
+    crs: {
+        type: 'name',
+        properties: {
+            name: 'EPSG:3857',
+        },
+    },
+    features: [
+        {
+            type: 'Feature',
+            geometry: {
+                type: 'Polygon',
+                coordinates: [
+                    [
+                        [-2e6, 6e6],
+                        [-2e6, 8e6],
+                        [0, 8e6],
+                        [0, 6e6],
+                        [-2e6, 6e6],
+                    ],
+                ],
+            },
+        },
+        {
+            type: 'Feature',
+            geometry: {
+                type: 'Polygon',
+                coordinates: [
+                    [
+                        [1e6, 6e6],
+                        [1e6, 8e6],
+                        [3e6, 8e6],
+                        [3e6, 6e6],
+                        [1e6, 6e6],
+                    ],
+                ],
+            },
+        },
+        {
+            type: 'Feature',
+            geometry: {
+                type: 'Polygon',
+                coordinates: [
+                    [
+                        [-2e6, -1e6],
+                        [-1e6, 1e6],
+                        [0, -1e6],
+                        [-2e6, -1e6],
+                    ],
+                ],
+            },
+        },
+    ],
+};
+
+var source = new VectorSource({
+    features: new GeoJSON().readFeatures(geojsonObject),
+});
+
+var raster = new TileLayer({
+    source: new OSM(),
+});
+
+var baseLayer = new VectorLayer({
+    source: source,
+    style: new Style({
+        fill: new Fill({
+            color: 'rgba(255, 255, 255, 0.2)',
+        }),
+        stroke: new Stroke({
+            color: '#4287f5',
+            width: 2,
+        }),
+        image: new CircleStyle({
+            radius: 7,
+            fill: new Fill({
+                color: '#ffcc33',
+            }),
+        }),
+    }),
+});
+
+var measuresLayer = new VectorLayer({
+    source: new VectorSource(),
+    style: new Style({
+        fill: new Fill({
+            color: 'rgba(255, 255, 255, 0.2)',
+        }),
+        stroke: new Stroke({
+            color: 'yellow',
+            width: 2,
+        }),
+        image: new CircleStyle({
+            radius: 7,
+            fill: new Fill({
+                color: '#ffcc33',
+            }),
+        }),
+    }),
+});
+
